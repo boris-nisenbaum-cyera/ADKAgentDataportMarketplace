@@ -1,0 +1,66 @@
+{
+  "name": "cyera_dataport_agent",
+  "description": "Answers questions about Cyera's Dataport Snowflake warehouse by reading schema context and running read-only SQL queries against it. Write/mutating SQL is rejected before it reaches the warehouse. Access requires an OAuth 2.0 access token issued via the Authorization Code flow (see securitySchemes.oauth2 below) -- callers act on behalf of a real, consenting end user, never on a static shared credential.",
+  "version": "1.0.0",
+  "protocolVersion": "0.3.0",
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/plain"],
+  "provider": {
+    "organization": "Cyera",
+    "url": "https://www.cyera.io"
+  },
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "extensions": [
+      {
+        "uri": "https://cloud.google.com/marketplace/docs/partners/ai-agents/setup-dcr",
+        "params": {
+          "target_url": "https://cyera-dataport-dcr-f6g7h8i9j0-uc.a.run.app/dcr"
+        }
+      }
+    ]
+  },
+  "skills": [
+    {
+      "id": "get_cyera_dataport_snowflake_context",
+      "name": "get_cyera_dataport_snowflake_context",
+      "description": "Get context (documentation/schema) for executing queries on Cyera's DataPort in Snowflake.",
+      "tags": ["dataport", "snowflake", "schema"],
+      "security": [
+        {"oauth2": ["openid", "profile", "email", "offline_access"]}
+      ]
+    },
+    {
+      "id": "execute_dataport_query",
+      "name": "execute_dataport_query",
+      "description": "Execute a single read-only SQL query (SELECT/WITH/SHOW/DESCRIBE/EXPLAIN only) on Cyera's DataPort Snowflake warehouse. Requires having loaded Dataport schema context first in the same conversation.",
+      "tags": ["dataport", "snowflake", "query"],
+      "security": [
+        {"oauth2": ["openid", "profile", "email", "offline_access"]}
+      ]
+    }
+  ],
+  "url": "https://cyera-dataport-agent-marketplace-a1b2c3d4e5-uc.a.run.app",
+  "securitySchemes": {
+    "oauth2": {
+      "type": "oauth2",
+      "flows": {
+        "authorizationCode": {
+          "authorizationUrl": "https://oidc.cyera.io/oidc/authorize",
+          "tokenUrl": "https://oidc.cyera.io/oidc/token",
+          "refreshUrl": "https://oidc.cyera.io/oidc/token",
+          "scopes": {
+            "openid": "Basic user identity.",
+            "profile": "Basic user profile.",
+            "email": "The user's email address.",
+            "offline_access": "Refresh token, so Gemini Enterprise can keep calling this agent without the user re-authenticating every session."
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {"oauth2": ["openid", "profile", "email", "offline_access"]}
+  ]
+}

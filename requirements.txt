@@ -1,0 +1,26 @@
+# Same pin rationale as ../ADKAgentDataport/requirements.txt (confirmed
+# live: 2.9.0 is the first version with real A2A streaming, and pinning
+# avoids silently drifting to an untested newer version on rebuild).
+google-adk[mcp]==2.9.0
+a2a-sdk>=1.1.2
+uvicorn>=0.30
+python-dotenv>=1.0
+
+# Lets ADK_MODEL be overridden to a "claude-*" value (default remains
+# "gemini-2.5-pro" -- see agent.py); same reasoning as
+# ../ADKAgentDataport/requirements.txt.
+anthropic>=0.43.0
+
+# oauth_middleware.py's own dependencies -- NOT needed by
+# ../ADKAgentDataport, which verifies Google Identity Platform tokens via
+# google-auth instead. This package verifies third-party OIDC (Cyera's own
+# oidc.cyera.io) access tokens, so it needs a general-purpose JOSE/JWT
+# library plus an async HTTP client for JWKS fetches.
+python-jose[cryptography]>=3.3
+httpx>=0.28
+
+# Optional, local dev only -- NOT needed in Cloud Run. Fixes local MCP
+# connection timeouts under a corporate TLS-inspecting proxy (self-signed
+# cert in the chain) by making Python's ssl module use the OS cert store
+# instead of certifi's.
+truststore>=0.9
